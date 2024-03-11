@@ -30,7 +30,8 @@ Make sure you have the following installed:
     ```bash
     npm install
     ```
-        or
+
+    or
 
     ```bash
     yarn

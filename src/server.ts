@@ -23,7 +23,7 @@ const start = async () => {
     await app.register(taskRoutes);
 
     // Start server only if not in Vercel environment
-    if (!process.env.VERCEL) {
+    if (process.env.NODE_ENV !== 'production') {
         try {
             const port = Number(process.env.API_PORT) || 3333;
             await app.listen({ port });
@@ -36,5 +36,7 @@ const start = async () => {
 
 start();
 
-// Export the app for Vercel
-export default app;
+export default async (req: any, res: any) => {
+    await app.ready();
+    app.server.emit('request', req, res);
+}

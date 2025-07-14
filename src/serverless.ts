@@ -2,8 +2,8 @@ import Fastify, { FastifyInstance } from 'fastify';
 import cors from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
 import fastifyCsrfProtection from '@fastify/csrf-protection';
-import { userRoutes } from './routes/user.routes';
-import { taskRoutes } from './routes/task.routes';
+import { userRoutes } from './routes/user.routes.js';
+import { taskRoutes } from './routes/task.routes.js';
 
 // Function to create and configure the Fastify app
 async function createApp(): Promise<FastifyInstance> {
@@ -34,23 +34,10 @@ async function createApp(): Promise<FastifyInstance> {
     return app;
 }
 
-// Start server only for local development
-if (process.env.NODE_ENV !== 'production') {
-    createApp().then(app => {
-        app.listen({ port: 3333 }, (err, address) => {
-            if (err) {
-                console.error(err);
-                process.exit(1);
-            }
-            console.log(`Server listening at ${address}`);
-        });
-    });
-}
-
 // Vercel serverless function handler
 let cachedApp: FastifyInstance;
 
-module.exports = async (req: any, res: any) => {
+export default async (req: any, res: any) => {
     if (!cachedApp) {
         cachedApp = await createApp();
         await cachedApp.ready();

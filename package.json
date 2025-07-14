@@ -2,13 +2,12 @@
   "name": "task-in-api",
   "version": "1.0.0",
   "description": "API para o Task-In",
-  "main": "index.js",
+  "main": "dist/serverless.js",
+  "type": "module",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only ./api/index.ts",
-    "start": "node ./dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "prisma generate && tsc",
-    "vercel-build": "prisma generate && tsc"
+    "dev": "tsup --watch",
+    "build": "prisma generate && tsup",
+    "start": "node dist/serverless.js"
   },
   "author": "Assis Junior",
   "license": "ISC",
@@ -17,15 +16,18 @@
     "@fastify/cors": "^8.5.0",
     "@fastify/csrf-protection": "^6.4.1",
     "@prisma/client": "^5.8.1",
-    "@types/bcrypt": "^5.0.2",
-    "@types/jsonwebtoken": "^9.0.5",
-    "@types/node": "^20.11.5",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.3.2",
     "fastify": "^4.25.2",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20.11.5",
     "prisma": "^5.8.1",
     "ts-node-dev": "^2.0.0",
+    "tsup": "^8.0.2",
     "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   }

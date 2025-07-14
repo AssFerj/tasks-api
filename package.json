@@ -1,7 +1,7 @@
 {
-  "name": "01",
+  "name": "task-in-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "API para o Task-In",
   "main": "index.js",
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",

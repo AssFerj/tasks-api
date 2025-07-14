@@ -1,46 +1,59 @@
-import Fastify from 'fastify'
-import cors from '@fastify/cors'
-import fastifyCookie from '@fastify/cookie'
-import fastifyCsrfProtection from '@fastify/csrf-protection'
-import { userRoutes } from './routes/user.routes'
-import { taskRoutes } from './routes/task.routes'
+import Fastify, { FastifyInstance } from 'fastify';
+import cors from '@fastify/cors';
+import fastifyCookie from '@fastify/cookie';
+import fastifyCsrfProtection from '@fastify/csrf-protection';
+import { userRoutes } from './routes/user.routes';
+import { taskRoutes } from './routes/task.routes';
 
-const app = Fastify({logger: true})
+// Function to create and configure the Fastify app
+async function createApp(): Promise<FastifyInstance> {
+    const app = Fastify({ logger: true });
 
-app.setErrorHandler((error, request, reply) => {
-    reply.code(400).send({
-        message: error.message
-    })
-})
-
-app.get('/', () => {
-    return { message: 'Welcome to Task-In API' };
-});
-
-const start = async () => {
+    // Register plugins
+    await app.register(cors);
     await app.register(fastifyCookie);
     await app.register(fastifyCsrfProtection, {
-        cookieKey: 'X-CSRF-Token'
+        cookieKey: 'X-CSRF-Token',
     });
-    await app.register(cors);
+
+    // Register routes
     await app.register(userRoutes);
     await app.register(taskRoutes);
+    
+    // Add a root route for health check
+    app.get('/', async (request, reply) => {
+        return { message: 'Welcome to Task-In API' };
+    });
 
-    // Start server only if not in Vercel environment
-    if (process.env.NODE_ENV !== 'production') {
-        try {
-            const port = Number(process.env.API_PORT) || 3333;
-            await app.listen({ port });
-        } catch (error) {
-            app.log.error(error);
-            process.exit(1);
-        }
-    }
-};
+    // Custom error handler
+    app.setErrorHandler((error, request, reply) => {
+        app.log.error(error);
+        reply.code(error.statusCode || 500).send({ message: error.message });
+    });
 
-start();
-
-export default async (req: any, res: any) => {
-    await app.ready();
-    app.server.emit('request', req, res);
+    return app;
 }
+
+// Start server only for local development
+if (process.env.NODE_ENV !== 'production') {
+    createApp().then(app => {
+        app.listen({ port: 3333 }, (err, address) => {
+            if (err) {
+                console.error(err);
+                process.exit(1);
+            }
+            console.log(`Server listening at ${address}`);
+        });
+    });
+}
+
+// Vercel serverless function handler
+let cachedApp: FastifyInstance;
+
+module.exports = async (req: any, res: any) => {
+    if (!cachedApp) {
+        cachedApp = await createApp();
+        await cachedApp.ready();
+    }
+    cachedApp.server.emit('request', req, res);
+};

@@ -13,6 +13,10 @@ app.setErrorHandler((error, request, reply) => {
     })
 })
 
+app.get('/', () => {
+    return { message: 'Welcome to Task-In API' };
+});
+
 const start = async () => {
     await app.register(fastifyCookie);
     await app.register(fastifyCsrfProtection, {

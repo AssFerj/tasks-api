@@ -36,12 +36,8 @@ async function createApp(): Promise<FastifyInstance> {
 }
 
 // Vercel serverless function handler
-let cachedApp: FastifyInstance;
-
 export default async (req: any, res: any) => {
-    if (!cachedApp) {
-        cachedApp = await createApp();
-        await cachedApp.ready();
-    }
-    cachedApp.server.emit('request', req, res);
+    const app = await createApp();
+    await app.ready();
+    app.server.emit('request', req, res);
 };

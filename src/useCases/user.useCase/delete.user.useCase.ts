@@ -1,4 +1,4 @@
-import prismaClient from "../../prisma";
+import prismaClient from "../../prisma/index.js";
 
 class DeleteUserUseCase{
     async execute(user_id: string){

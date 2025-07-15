@@ -1,4 +1,4 @@
-import prismaClient from "../../prisma";
+import prismaClient from "../../prisma/index.js";
 
 class GetUserByEmailUseCase{
     async execute(email: string){

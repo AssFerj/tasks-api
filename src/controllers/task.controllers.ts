@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateTaskUseCase, DeleteTaskUseCase, ListTasksUseCase, UpdateTaskUseCase } from "../useCases/task.useCase";
+import { CreateTaskUseCase, DeleteTaskUseCase, ListTasksUseCase, UpdateTaskUseCase } from "../useCases/task.useCase/index.js";
 
 class CreateTaskController{
     async handle(request: FastifyRequest, reply: FastifyReply){

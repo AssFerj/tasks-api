@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { CreateUserUseCase, GetUserByEmailUseCase, ListUsersUseCase, LoginUserUseCase } from "../useCases/user.useCase";
-import { AuthUseCase } from "../useCases/auth.useCase/auth.useCase"
+import { CreateUserUseCase, GetUserByEmailUseCase, ListUsersUseCase, LoginUserUseCase } from "../useCases/user.useCase/index.js";
+import { AuthUseCase } from "../useCases/auth.useCase/auth.useCase.js"
 import bcrypt from "bcrypt";
 import { fastifyCookie } from "@fastify/cookie";
 
@@ -50,7 +50,7 @@ class ListUsersController{
             return reply.status(201).send({
                 ok: true,
                 message: "Users listted successfully",
-                data: users.map(user => {
+                data: users.map((user: { id: string; name: string; email: string; created_at: Date | null, updated_at: Date | null }) => {
                     return {
                         id: user.id,
                         name: user.name,

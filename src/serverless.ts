@@ -23,7 +23,7 @@ async function createApp(): Promise<FastifyInstance> {
     
     // Add a root route for health check
     app.get('/', async (request, reply) => {
-        return { message: 'Welcome to Task-In API' };
+        reply.send({ message: 'Welcome to Task-In API' });
     });
 
     // Custom error handler

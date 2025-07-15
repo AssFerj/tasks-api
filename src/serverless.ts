@@ -1,5 +1,5 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import cors from '@fastify/cors';
+import cors, { fastifyCors } from '@fastify/cors';
 import fastifyCookie from '@fastify/cookie';
 import fastifyCsrfProtection from '@fastify/csrf-protection';
 import { userRoutes } from './routes/user.routes.js';
@@ -12,6 +12,7 @@ async function createApp(): Promise<FastifyInstance> {
     // Register plugins
     await app.register(cors);
     await app.register(fastifyCookie);
+    await app.register(fastifyCors, {origin: '*'});
     await app.register(fastifyCsrfProtection, {
         cookieKey: 'X-CSRF-Token',
     });

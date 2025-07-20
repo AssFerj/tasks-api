@@ -2,28 +2,21 @@ import { FastifyReply, FastifyRequest } from "fastify";
 import { CreateUserUseCase, GetUserByEmailUseCase, ListUsersUseCase, LoginUserUseCase } from "../useCases/user.useCase/index.js";
 import { AuthUseCase } from "../useCases/auth.useCase/auth.useCase.js"
 import bcrypt from "bcrypt";
-import { fastifyCookie } from "@fastify/cookie";
 
 class CreateUserController{
-    async handle(request: FastifyRequest, reply: FastifyReply){
+    async handle({ name, email, password }: { name: string, email: string, password: string }, reply: FastifyReply){
         try {
-            const {name, email, password} = request.body as {name: string, email: string, password: string}
-            if(!name){
-                return reply.status(404).send({message: "Missing required field: Name"})
-            }
-            if(!email){
-                return reply.status(404).send({message: "Missing required field: E-mail"})
-            }
-            if(!password){
-                return reply.status(404).send({message: "Missing required field: Password"})
-            }
+            console.log('--- REGISTRATION ATTEMPT ---');
+            console.log('Received data:', { name, email });
+
             const userAlreadyExist = new GetUserByEmailUseCase()
             const result = await userAlreadyExist.execute(email)
-            console.log(result);
-            
+
             if(result){
+                console.log('Registration failed: User already exists.');
                 return reply.status(400).send({message: "User already exist"})
             }
+
             const hashPassword = bcrypt.hashSync(password, 10)
             const userUseCase = new CreateUserUseCase()
             const user = await userUseCase.execute({
@@ -31,19 +24,23 @@ class CreateUserController{
                 email: email,
                 password: hashPassword
             })
+
+            console.log('User successfully created in DB:', user);
+
             return reply.status(201).send({
                 ok: true,
                 message: "User created successfully",
                 data: user
             })
         } catch (error) {
+            console.log('--- REGISTRATION ERROR ---', error);
             return reply.status(500).send({message: "Internal server error"})
         }
     }
 }
 
 class ListUsersController{
-    async handle(request: FastifyRequest, reply: FastifyReply){
+    async handle(reply: FastifyReply){
         try {
             const userUseCase = new ListUsersUseCase()
             const users = await userUseCase.execute()
@@ -67,12 +64,8 @@ class ListUsersController{
 }
 
 class GetUserController{
-    async handle(request: FastifyRequest, reply: FastifyReply){
+    async handle({ email }: { email: string }, reply: FastifyReply){
         try {
-            const {email} = request.params as {email: string}
-            if(!email){
-                return reply.status(404).send({message: "Missing required field: E-mail"})
-            }
             const userUseCase = new GetUserByEmailUseCase()
             const user = await userUseCase.execute(email)
             if(!user){
@@ -90,13 +83,8 @@ class GetUserController{
 }
 
 class LoginUserController{
-    async handle(request: FastifyRequest, reply: FastifyReply){
+    async handle({ email, password }: { email: string, password: string }, reply: FastifyReply){
         try {
-            // const csrfToken = await reply.generateCsrf()
-            // if(!csrfToken){
-            //     return reply.status(401).send({message: "Unauthorized"})
-            // }
-            const {email, password} = request.body as {email: string, password: string}
             if(!email){
                 return reply.status(404).send({message: "Missing required field: E-mail"})
             }

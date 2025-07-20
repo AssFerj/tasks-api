@@ -2,26 +2,20 @@ import prismaClient from "../../prisma/index.js";
 
 class GetUserByEmailUseCase{
     async execute(email: string){
-        const user = await prismaClient.user.findFirst({
+        const user = await prismaClient.user.findUnique({
             where:{
                 email: email
-            }, 
-            select:{
+            },
+            select: {
                 id: true,
                 name: true,
-                email: true
+                email: true,
+                password: true,
+                created_at: true,
+                updated_at: true
             }
         })
-
-        if (!user) {
-            return null;
-          }
-
-        return {
-            id: user.id,
-            name: user.name,
-            email: user.email
-        };
+        return user;
     }
 }
 

@@ -62,6 +62,7 @@ The backend server should be running at http://localhost:3333.
 7. End point to list tasks: 'baseUrl/user/:userId/task'
 8. End point to update a task: 'baseUrl/user/:userId/task/:taskId'
 9. End point to delete a task: 'baseUrl/user/:userId/task/:taskId'
+10. End point to view API documentation: 'baseUrl/docs'
 
 ### Technologies Used
 
@@ -72,6 +73,11 @@ The backend server should be running at http://localhost:3333.
 - MongoDB
 - JSON Web Token
 - Bcrypt
+- Zod
+- Fastify
+- Fastify Type Provider Zod
+- Fastify Swagger
+- Fastify Swagger UI
 
 ## Licence
 
